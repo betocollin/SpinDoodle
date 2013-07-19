@@ -21,12 +21,15 @@ import android.view.MotionEvent;
  changed. the event list is like a dynamic list. Therefore we need to mirror this behaviour
  in our code.
  */
+ 
+ArrayList<TouchDial> diallist;
+/*
 boolean dialactive[] = new boolean[2];
 float dialx[] = new float[2];
 float dialy[] = new float[2];
 float movex[] = new float[2];
 float movey[] = new float[2];
-
+*/
 //-----------------------------------------------------------------------------------------
 
 void setup() {
@@ -36,6 +39,7 @@ void setup() {
   fill(0, 0, 244);
   rect(100, 100, 100, 100);
   stroke(255);
+  diallist = new ArrayList<TouchDial>();
 
   dialactive[0] = false;
   dialactive[1] = false;
@@ -67,24 +71,26 @@ void draw() {
 
 public boolean surfaceTouchEvent(MotionEvent event) {
 
-  // ACTION_DOWN should use MotionDetect.ACTION_DOWN?
   //use findPointerIndex?
   //merge with ACTION_POINTER_DOWN
   if (event.getActionMasked() == MotionEvent.ACTION_DOWN ||
     event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
+      print("(ACTION_DOWN): " +str(index));
       //create a new dial with X and Y coords
-    int index = event.getActionIndex();
-    //print("Index is " + str(index));
-    dialactive[index] = true;
-    dialx[index] = event.getX(index);
-    dialy[index] = event.getY(index);
-    print("(ACTION_DOWN): " +str(index));
+      //we only want two touchdials for this app.
+      if (diallist.size() < 2) {
+        int index = event.getActionIndex();
+        t = new TouchDial(event.getPointerId(index), event.getX(index), event.getY(index));
+        diallist.add(t);
+      }
   } 
   // ACTION_UP 
   else if (event.getActionMasked() == MotionEvent.ACTION_UP ||
     event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
       //destroy the dial
     int index = event.getActionIndex();
+    int pointer = event.getPointerId(index);
+    //ur here: find the entry in array list with matching pointer id 
     print("Index is " + str(index));
     dialactive[index] = false;
     print("(ACTION_UP): " +str(index));
