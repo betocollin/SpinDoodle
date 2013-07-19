@@ -40,8 +40,7 @@ public boolean surfaceTouchEvent(MotionEvent event) {
   else if (event.getActionMasked() == MotionEvent.ACTION_UP ||
     event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
     //destroy the dial
-    int index = event.getActionIndex();
-    int id = event.getPointerId(index);
+    int id = event.getPointerId(event.getActionIndex());
     for (int i=0; i<diallist.size(); i++) {
       if (diallist.get(i).id == id) {
         diallist.remove(i);
@@ -50,7 +49,6 @@ public boolean surfaceTouchEvent(MotionEvent event) {
   }
   else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
     //update the dial's 
-    int pointercount = event.getPointerCount();
     for (int i = 0; i<diallist.size(); i++) {
       TouchDial thisdial = diallist.get(i);
       int index = event.findPointerIndex(thisdial.id);
