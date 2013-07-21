@@ -3,7 +3,7 @@ import android.view.MotionEvent;
 
 ArrayList<TouchDial> diallist;
 PImage img;
-
+int brushsize;
 float [] pcurs = new float[2];
 float [] curs = new float[2];
 float [] limits = new float[2];
@@ -14,6 +14,7 @@ void setup() {
   curs[1] = pcurs[1] = displayHeight/2;
   limits[0] = displayWidth;
   limits[1] = displayHeight;
+  brushsize = 15;
   
   img = createImage(displayWidth, displayHeight, RGB);  // Make a PImage object
   img.loadPixels();
@@ -31,18 +32,27 @@ void setup() {
 //-----------------------------------------------------------------------------------------
 
 void draw() {
-  image(img, 0, 0);
+  image(img,0,0);
   for (int i = 0; i<diallist.size(); i++) {
     diallist.get(i).draw();
-    println("Diff: " + str(diallist.get(i).getDiff()));
     float newcurs = curs[i] + 5*diallist.get(i).getDiff();
     if (newcurs > 0 && newcurs < limits[i]) {
       curs[i] = newcurs;
     }
     diallist.get(i).pradial = diallist.get(i).radial;
   }
-  stroke(0);
-  point(curs[0], curs[1]);
+  
+  //draw on the image not the screen itself.
+  img.loadPixels();
+  println("Coords: (" + str(curs[0]) + "," + str(curs[1]) + ") = Pixel " + str(int(curs[0])+img.width*int(curs[1])));
+  img.pixels[int(curs[0])+img.width*int(curs[1])] = color(0);
+  for (int i = 0; i<brushsize; i++) {
+    img.pixels[int(curs[0])+img.width*int(curs[1]-i)] = color(0);
+    img.pixels[int(curs[0])+img.width*int(curs[1]+i)] = color(0);
+    img.pixels[int(curs[0]-i)+img.width*int(curs[1])] = color(0);
+    img.pixels[int(curs[0]+i)+img.width*int(curs[1])] = color(0);
+  }
+  img.updatePixels();
 }
 //-----------------------------------------------------------------------------------------
 
