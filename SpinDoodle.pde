@@ -2,7 +2,7 @@
 import android.view.MotionEvent;
 
 ArrayList<TouchDial> diallist;
-PImage img;
+PGraphics img;
 int brushsize;
 float [] pcurs = new float[2];
 float [] curs = new float[2];
@@ -16,7 +16,7 @@ void setup() {
   limits[1] = displayHeight;
   brushsize = 15;
   
-  img = createImage(displayWidth, displayHeight, RGB);  // Make a PImage object
+  img = createGraphics(displayWidth, displayHeight);  // Make a PImage object
   img.loadPixels();
   for (int i = 0; i < img.pixels.length; i++) {
     float rand = random(255);
@@ -43,16 +43,11 @@ void draw() {
   }
   
   //draw on the image not the screen itself.
-  img.loadPixels();
+  img.beginDraw();
+  img.strokeWeight(5);
   println("Coords: (" + str(curs[0]) + "," + str(curs[1]) + ") = Pixel " + str(int(curs[0])+img.width*int(curs[1])));
-  img.pixels[int(curs[0])+img.width*int(curs[1])] = color(0);
-  for (int i = 0; i<brushsize; i++) {
-    img.pixels[int(curs[0])+img.width*int(curs[1]-i)] = color(0);
-    img.pixels[int(curs[0])+img.width*int(curs[1]+i)] = color(0);
-    img.pixels[int(curs[0]-i)+img.width*int(curs[1])] = color(0);
-    img.pixels[int(curs[0]+i)+img.width*int(curs[1])] = color(0);
-  }
-  img.updatePixels();
+  img.point(curs[0], curs[1]);
+  img.endDraw();
 }
 //-----------------------------------------------------------------------------------------
 
