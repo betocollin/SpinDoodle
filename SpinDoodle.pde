@@ -17,6 +17,8 @@ Accelerometer accel;
 float accelx;
 float accely;
 float accelz;
+float eraserx;
+float erasery;
 
 void setup() {
   orientation(PORTRAIT);
@@ -31,13 +33,13 @@ void setup() {
   img = createGraphics(displayWidth, displayHeight);  // Make a PImage object
   img.loadPixels();
   for (int i = 0; i < img.pixels.length; i++) {
-    float rand = random(100, 255);
+    float rand = random(100, 200);
     color c = color(rand);
     img.pixels[i] = c;
   }
   img.updatePixels();
   img.beginDraw();
-  img.fill(255, 0, 0);
+  img.fill(196, 0, 13);
   img.noStroke();
   img.rect(0, 0, border, img.height);
   img.rect(0, 0, img.width, border);
@@ -83,20 +85,21 @@ void draw() {
   }
   
   //detect shake
-  if (accelx+accely+accelz > 30) {
-    println("Shaking..");
+  if (accelx+accely+accelz > 20) {
     //fill a random area with noise
-    int erasersize = 50;
-    float eraserx = random(border,img.width-border-erasersize);
-    float erasery = random(border, img.height-border-erasersize);
-    //for (float i=eraserx; i
+    int erasersize = 300;
+    eraserx = random(border,img.width-border-erasersize);
+    erasery = random(border, img.height-border-erasersize);
+
     img.beginDraw();
-    img.strokeWeight(50);
-    img.stroke(0,255,0);
-    img.point(eraserx, erasery);
+    for (float i=eraserx; i<eraserx+erasersize; i++) {
+      for (float j=erasery; j<erasery+erasersize; j++) {
+        img.stroke(random(100,200));
+        img.point(i, j);
+      }
+    }
     img.endDraw();
   }
-  println("Accel: " + str(accel.getX()));
 }
 //-----------------------------------------------------------------------------------------
 
