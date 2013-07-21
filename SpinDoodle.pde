@@ -6,25 +6,32 @@ boolean drawsetup;
 PImage img;
 
 void setup() {
-  //fill the background with a grey grain.
-  drawsetup = true;
-  img = loadImage("background.jpg");
+  orientation(PORTRAIT);
+
+  img = createImage(displayWidth, displayHeight, RGB);  // Make a PImage object
+  img.loadPixels();
+  for (int i = 0; i < img.pixels.length; i++) {
+    float rand = random(255);
+    color c = color(rand);
+    img.pixels[i] = c;
+  }
+  img.updatePixels();
+  drawsetup = false;
+
   fill(0, 0, 244);
-  stroke(255);
+  stroke(0);
   diallist = new ArrayList<TouchDial>();
 }
 
 //-----------------------------------------------------------------------------------------
 
 void draw() {
-  //TODO: we need a setup program that generates a random background.
-  img = loadImage("background.jpg");
+  //generate a random background.
   image(img, 0, 0);
   for (int i = 0; i<diallist.size(); i++) {
     diallist.get(i).draw();
   }
 }
-
 //-----------------------------------------------------------------------------------------
 
 public boolean surfaceTouchEvent(MotionEvent event) {
