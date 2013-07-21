@@ -2,12 +2,19 @@
 import android.view.MotionEvent;
 
 ArrayList<TouchDial> diallist;
-boolean drawsetup;
 PImage img;
+
+float [] pcurs = new float[2];
+float [] curs = new float[2];
+float [] limits = new float[2];
 
 void setup() {
   orientation(PORTRAIT);
-
+  curs[0] = pcurs[0] = displayWidth/2;
+  curs[1] = pcurs[1] = displayHeight/2;
+  limits[0] = displayWidth;
+  limits[1] = displayHeight;
+  
   img = createImage(displayWidth, displayHeight, RGB);  // Make a PImage object
   img.loadPixels();
   for (int i = 0; i < img.pixels.length; i++) {
@@ -16,8 +23,6 @@ void setup() {
     img.pixels[i] = c;
   }
   img.updatePixels();
-  drawsetup = false;
-
   fill(0, 0, 244);
   stroke(0);
   diallist = new ArrayList<TouchDial>();
@@ -26,11 +31,18 @@ void setup() {
 //-----------------------------------------------------------------------------------------
 
 void draw() {
-  //generate a random background.
   image(img, 0, 0);
   for (int i = 0; i<diallist.size(); i++) {
     diallist.get(i).draw();
+    println("Diff: " + str(diallist.get(i).getDiff()));
+    float newcurs = curs[i] + 5*diallist.get(i).getDiff();
+    if (newcurs > 0 && newcurs < limits[i]) {
+      curs[i] = newcurs;
+    }
+    diallist.get(i).pradial = diallist.get(i).radial;
   }
+  stroke(0);
+  point(curs[0], curs[1]);
 }
 //-----------------------------------------------------------------------------------------
 
@@ -76,7 +88,7 @@ public boolean surfaceTouchEvent(MotionEvent event) {
       else {
         radial = atan(diffx/diffy);
       }
-      thisdial.radial = radial;
+      thisdial.setRadial(radial);
     }
   }
 
