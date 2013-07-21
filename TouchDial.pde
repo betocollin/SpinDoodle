@@ -4,8 +4,6 @@ class TouchDial {
   private int id;
   private float posX;
   private float posY;
-  float moveX;
-  float moveY;
   float radial;
   
   TouchDial(int id_, float posX_, float posY_) {

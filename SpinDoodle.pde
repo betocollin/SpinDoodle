@@ -77,8 +77,6 @@ public boolean surfaceTouchEvent(MotionEvent event) {
         radial = atan(diffx/diffy);
       }
       thisdial.radial = radial;
-      thisdial.moveX = event.getX(index);
-      thisdial.moveY = event.getY(index);
     }
   }
 
