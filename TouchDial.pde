@@ -29,13 +29,17 @@ class TouchDial {
   
   void draw() {
   //draw the TouchDial at x,y
-    fill(150, 100, 150);
+    noStroke();
+    fill(0, 0, 0, 50);
     pushMatrix();
     translate(posX, posY);
     ellipse(0, 0, 170, 170);
     if (radial > 0) {
       rotate(radial);
-      line(0, 0, 0, -170/2);
+      strokeWeight(10);
+      stroke(200,0,0);
+      arc(0,0, 170, 170, -PI/2-PI/6, -PI/2+PI/6);
+      //line(0, 0, 0, -170/2);
     }
     popMatrix();
   }

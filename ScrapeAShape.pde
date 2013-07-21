@@ -1,21 +1,25 @@
+//SpinDoodle
 import android.view.MotionEvent;
 
 ArrayList<TouchDial> diallist;
+boolean drawsetup;
+PImage img;
 
 void setup() {
-  background(0, 255, 0);
+  //fill the background with a grey grain.
+  drawsetup = true;
+  img = loadImage("background.jpg");
   fill(0, 0, 244);
-  rect(100, 100, 100, 100);
   stroke(255);
   diallist = new ArrayList<TouchDial>();
-
 }
 
 //-----------------------------------------------------------------------------------------
 
 void draw() {
-  background(255, 0, 0);
-
+  //TODO: we need a setup program that generates a random background.
+  img = loadImage("background.jpg");
+  image(img, 0, 0);
   for (int i = 0; i<diallist.size(); i++) {
     diallist.get(i).draw();
   }
@@ -70,7 +74,7 @@ public boolean surfaceTouchEvent(MotionEvent event) {
       thisdial.moveY = event.getY(index);
     }
   }
-  
+
   return super.surfaceTouchEvent(event);
 }
 
@@ -83,3 +87,4 @@ public float vector_angle (float ax, float ay, float bx, float by) {
   float modb = sqrt(bx*bx+by*by);
   return adotb / moda*modb;
 }
+
