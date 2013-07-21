@@ -3,29 +3,30 @@ import android.view.MotionEvent;
 
 ArrayList<TouchDial> diallist;
 PGraphics img;
-int brushsize;
 float [] pcurs = new float[2];
 float [] curs = new float[2];
-float [] limits = new float[2];
+float [] upperedge = new float[2];
+float [] loweredge = new float[2];
+float border;
 
 void setup() {
   orientation(PORTRAIT);
   curs[0] = pcurs[0] = displayWidth/2;
   curs[1] = pcurs[1] = displayHeight/2;
-  limits[0] = displayWidth;
-  limits[1] = displayHeight;
-  brushsize = 15;
+  border = 50;
+  loweredge[0] = border;
+  loweredge[1] = border;
+  upperedge[0] = displayWidth-border;
+  upperedge[1] = displayHeight-border;
   
   img = createGraphics(displayWidth, displayHeight);  // Make a PImage object
   img.loadPixels();
   for (int i = 0; i < img.pixels.length; i++) {
-    float rand = random(255);
+    float rand = random(100,255);
     color c = color(rand);
     img.pixels[i] = c;
   }
   img.updatePixels();
-  fill(0, 0, 244);
-  stroke(0);
   diallist = new ArrayList<TouchDial>();
 }
 
@@ -36,7 +37,7 @@ void draw() {
   for (int i = 0; i<diallist.size(); i++) {
     diallist.get(i).draw();
     float newcurs = curs[i] + 5*diallist.get(i).getDiff();
-    if (newcurs > 0 && newcurs < limits[i]) {
+    if (newcurs > loweredge[i] && newcurs < upperedge[i]) {
       curs[i] = newcurs;
     }
     diallist.get(i).pradial = diallist.get(i).radial;
@@ -45,7 +46,6 @@ void draw() {
   //draw on the image not the screen itself.
   img.beginDraw();
   img.strokeWeight(5);
-  println("Coords: (" + str(curs[0]) + "," + str(curs[1]) + ") = Pixel " + str(int(curs[0])+img.width*int(curs[1])));
   img.point(curs[0], curs[1]);
   img.endDraw();
 }
