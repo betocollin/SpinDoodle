@@ -29,25 +29,53 @@ void setup() {
   loweredge[1] = border;
   upperedge[0] = displayWidth-border;
   upperedge[1] = displayHeight-border;
-
   img = createGraphics(displayWidth, displayHeight);  // Make a PImage object
+  diallist = new ArrayList<TouchDial>();
+  accel = new Accelerometer();
+  clear_screen();
+}
+
+void clear_screen() {
+  //generate textured area
   img.loadPixels();
   for (int i = 0; i < img.pixels.length; i++) {
-    float rand = random(100, 200);
+    float rand = random(125, 175);
     color c = color(rand);
     img.pixels[i] = c;
   }
   img.updatePixels();
+
+  //draw the border
   img.beginDraw();
-  img.fill(196, 0, 13);
   img.noStroke();
-  img.rect(0, 0, border, img.height);
-  img.rect(0, 0, img.width, border);
-  img.rect(img.width-border, 0, border, img.height);
-  img.rect(0, img.height-border, img.width, border);
+  
+  //black corners
+  img.fill(0);
+  img.rect(0,0,border,border);
+  img.rect(img.width-border, 0, border, border);
+  img.rect(0,img.height-border,border,border);
+  img.rect(img.width-border,img.height-border,border,border);
+  
+  //red borders
+  img.fill(196, 0, 13);
+  img.rect(0, border, border, img.height-border*2); //left bar
+  img.rect(border, 0, img.width-border*2, border); //top bar
+  img.rect(img.width-border, border, border, img.height-border*2); //right bar
+  img.rect(border, img.height-border, img.width-border*2, border); //bottom bar
+  
+  //curve corners
+  img.arc(border, border, border*2, border*2, PI, PI+HALF_PI);
+  img.arc(img.width-border, border, border*2, border*2, PI+HALF_PI, TWO_PI);
+  img.arc(border, img.height-border, border*2, border*2, HALF_PI, PI);
+  img.arc(img.width-border, img.height-border, border*2, border*2, 0, HALF_PI);
+  
+  //an inside edge effect
+  img.stroke(50);
+  img.line(border, border, img.width-border, border);
+  img.line(border, border, border, img.height-border);
+  img.line(img.width-border, border, img.width-border, img.height-border);
+  img.line(border, img.height-border, img.width-border, img.height-border);
   img.endDraw();
-  diallist = new ArrayList<TouchDial>();
-  accel = new Accelerometer();
 }
 
 //-----------------------------------------------------------------------------------------
