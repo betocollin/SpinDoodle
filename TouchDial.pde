@@ -2,36 +2,37 @@
 
 class TouchDial {
   private int id;
-  private float posX;
-  private float posY;
-  float radial;
-  float pradial;
+  private float x;
+  private float y;
+  private float dial;
+  //float pdial;
   
-  TouchDial(int id_, float posX_, float posY_) {
+  TouchDial(int id_, float x_, float y_) {
     id = id_;
-    posX = posX_;
-    posY = posY_;
-    radial = -1;
+    x = x_;
+    y = y_;
+    dial = -1;
   }
   
   float getX(){
-    return posX;
+    return x;
   }
   
   float getY(){
-    return posY;
+    return y;
   }
   
-  void setRadial(float radial_) {
-    radial = radial_;
+  void setDial(float dial_) {
+    dial = dial_;
   }
   
-  float getRadial() {
-    return radial;
+  float getDial() {
+    return dial;
   }
   
+  /*
   float getDiff() {
-    float diff = radial - pradial;
+    float diff = dial - pdial;
     if (diff < -PI) {
       return diff + 2*PI;
     }
@@ -42,16 +43,17 @@ class TouchDial {
       return diff;
     }
   }
+    */
   
   void draw() {
   //draw the TouchDial at x,y
     noStroke();
     fill(0, 0, 0, 50);
     pushMatrix();
-    translate(posX, posY);
+    translate(x, y);
     ellipse(0, 0, 170, 170);
-    if (radial > 0) {
-      rotate(radial);
+    if (dial > 0) {
+      rotate(dial);
       strokeWeight(10);
       stroke(200,0,0);
       arc(0,0, 170, 170, -PI/2-PI/6, -PI/2+PI/6);
