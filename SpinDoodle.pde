@@ -112,21 +112,9 @@ void draw() {
     accelz = -accelz;
   }
   
-  //detect shake
+  //clear screen on shake
   if (accelx+accely+accelz > 20) {
-    //fill a random area with noise
-    int erasersize = 300;
-    eraserx = random(border,img.width-border-erasersize);
-    erasery = random(border, img.height-border-erasersize);
-
-    img.beginDraw();
-    for (float i=eraserx; i<eraserx+erasersize; i++) {
-      for (float j=erasery; j<erasery+erasersize; j++) {
-        img.stroke(random(100,200));
-        img.point(i, j);
-      }
-    }
-    img.endDraw();
+    clear_screen();
   }
 }
 //-----------------------------------------------------------------------------------------
