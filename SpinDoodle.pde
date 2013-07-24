@@ -42,6 +42,7 @@ void setup() {
 
 void clear_screen() {
   //generate textured area
+  //manipulating the pixels directly is clunky but 1,000 times faster.
   img.loadPixels();
   for (int i = 0; i < img.pixels.length; i++) {
     float rand = random(125, 175);
@@ -164,18 +165,12 @@ public boolean surfaceTouchEvent(MotionEvent event) {
         }
         else if ((y < 0) && (x<0)) {
           thisdial.setDial(atan(x/y)+PI);
-          println("setting radial to :" + str(thisdial.getDial()));
         }
         else if ((y>0) && ( x<0)) {
           thisdial.setDial(atan(y/-x)+3*PI/2);
-          println("setting radial to :" + str(thisdial.getDial()));
         }
         else if ((y != 0) && (x!=0)) {
           thisdial.setDial(atan(x/y));
-          println("setting radial to :" + str(thisdial.getDial()));
-        }
-        else {
-          println("Doing nothing (" + str(x) + "," + str(y) + ")!!!");
         }
       }
     }
