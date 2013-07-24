@@ -5,7 +5,7 @@ class TouchDial {
   private float x;
   private float y;
   private float dial;
-  //float pdial;
+  private float delta;
   
   TouchDial(int id_, float x_, float y_) {
     id = id_;
@@ -23,6 +23,15 @@ class TouchDial {
   }
   
   void setDial(float dial_) {
+      if ((dial >=PI+HALF_PI) && (dial_ <= HALF_PI)) {
+        delta = TWO_PI - dial + dial_;
+      }
+      else if ((dial <= HALF_PI) && (dial_ >=PI+HALF_PI)) {
+        delta = dial_-TWO_PI-dial;
+      }
+      else {
+        delta = dial_ - dial;
+      }    
     dial = dial_;
   }
   
@@ -30,6 +39,9 @@ class TouchDial {
     return dial;
   }
   
+  float getDelta() {
+    return delta;
+  }
   /*
   float getDiff() {
     float diff = dial - pdial;
@@ -52,7 +64,7 @@ class TouchDial {
     pushMatrix();
     translate(x, y);
     ellipse(0, 0, 170, 170);
-    if (dial > 0) {
+    if (dial > -1) {
       rotate(dial);
       strokeWeight(10);
       stroke(200,0,0);

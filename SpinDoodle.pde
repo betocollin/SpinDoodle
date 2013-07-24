@@ -16,6 +16,7 @@ float [] pdial = new float[2];
 float [] upperedge = new float[2];
 float [] loweredge = new float[2];
 float border;
+float bezel;
 
 Accelerometer accel;
 float accelx;
@@ -29,6 +30,8 @@ void setup() {
   curs[0] = pcurs[0] = displayWidth/2;
   curs[1] = pcurs[1] = displayHeight/2;
   border = 30;
+  bezel = 5;
+
   loweredge[0] = border;
   loweredge[1] = border;
   upperedge[0] = displayWidth-border;
@@ -74,37 +77,38 @@ void clear_screen() {
   img.arc(img.width-border, img.height-border, border*2, border*2, 0, HALF_PI);
 
   //an inside edge effect
-  img.stroke(50);
-  img.line(border, border, img.width-border, border);
-  img.line(border, border, border, img.height-border);
-  img.line(img.width-border, border, img.width-border, img.height-border);
-  img.line(border, img.height-border, img.width-border, img.height-border);
+  img.fill(122, 5, 13);
+  img.noStroke();
+  img.rect(border-bezel, border-bezel, bezel, img.height-2*border+2*bezel);
+  img.rect(border, border-bezel, img.width-2*border, bezel);
+  img.fill(219, 107, 155);
+  img.rect(img.width-border, border-bezel, bezel, img.height-2*border+2*bezel);
+  img.rect(border, img.height-border, img.width-2*border, bezel);
   img.endDraw();
 }
 
 //-----------------------------------------------------------------------------------------
 
 void draw() {
+  float diff;
+  float newcurs;
+
+  //put the doodle on screen
   image(img, 0, 0);
-  for (int i = 0; i<diallist.size(); i++) {
-    diallist.get(i).draw();
-    pdial[i] = dial[i];
-    dial[i] = diallist.get(i).getDial();
-    float diff = dial[i] - pdial[i];
-    println("Diff: " + diff);
-    if (diff < -PI) {
-      diff = diff + 2*PI;
-    }
-    else if (diff > PI) {
-      diff = diff - 2*PI;
-    }
-    float newcurs = curs[i] + 5*diff; //5 is a fudge factor
-    if ((newcurs > loweredge[i]) && (newcurs < upperedge[i])) {
-      curs[i] = newcurs;
+
+  //calculate the cursor position based in the dials
+  if (!diallist.isEmpty()) {
+    for (int i = 0; i<diallist.size(); i++) {
+      //need to handle exception around get in case the item is deleted.
+      diallist.get(i).draw();
+      newcurs = curs[i] + 5*diallist.get(i).getDelta(); //5 is a fudge factor
+      if ((newcurs > loweredge[i]) && (newcurs < upperedge[i])) {
+        curs[i] = newcurs;
+      }
     }
   }
 
-  //draw on the image not the screen itself.
+  //draw on the image (not the screen itself)
   img.beginDraw();
   img.stroke(0);
   img.strokeWeight(5);
@@ -113,20 +117,11 @@ void draw() {
 
   //handle accelerometer wipe
   accelx = accel.getX();
-  if (accelx < 0) {
-    accelx = -accelx;
-  } 
   accely = accel.getY();
-  if (accely < 0) {
-    accely = -accely;
-  } 
   accelz = accel.getZ();
-  if (accelz < 0) {
-    accelz = -accelz;
-  }
 
   //clear screen on shake
-  if ((accelx+accely+accelz) > 20) {
+  if ((abs(accelx)+abs(accely)+abs(accelz)) > 30) {
     clear_screen();
   }
 }
@@ -148,46 +143,46 @@ public boolean surfaceTouchEvent(MotionEvent event) {
     (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP)) {
     //destroy the dial
     int id = event.getPointerId(event.getActionIndex());
-    for (int i=0; i<diallist.size(); i++) {
-      if (diallist.get(i).id == id) {
-        diallist.remove(i);
+    if (!diallist.isEmpty()) {
+      for (int i=diallist.size()-1; i>=0; i--) {
+        if (diallist.get(i).id == id) {
+          diallist.remove(i);
+          break;
+        }
       }
     }
   }
   else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-    //update the dials 
-    for (int i = 0; i<diallist.size(); i++) {
-      TouchDial thisdial = diallist.get(i);
-      int index = event.findPointerIndex(thisdial.id);
-      float x = event.getX(index)-thisdial.getX();
-      float y = thisdial.getY()-event.getY(index);
-      float radial;
-      if ((y < 0) && (x>0)) {
-        radial = atan(-y/x)+PI/2;
+    //update the dials
+    if (!diallist.isEmpty()) {
+      for (int i = 0; i<diallist.size(); i++) {
+        TouchDial thisdial = diallist.get(i);
+        int index = event.findPointerIndex(thisdial.id);
+        float x = event.getX(index)-thisdial.getX();
+        float y = thisdial.getY()-event.getY(index);
+
+        if ((y < 0) && (x>0)) {
+          thisdial.setDial(atan(-y/x)+PI/2);
+        }
+        else if ((y < 0) && (x<0)) {
+          thisdial.setDial(atan(x/y)+PI);
+          println("setting radial to :" + str(thisdial.getDial()));
+        }
+        else if ((y>0) && ( x<0)) {
+          thisdial.setDial(atan(y/-x)+3*PI/2);
+          println("setting radial to :" + str(thisdial.getDial()));
+        }
+        else if ((y != 0) && (x!=0)) {
+          thisdial.setDial(atan(x/y));
+          println("setting radial to :" + str(thisdial.getDial()));
+        }
+        else {
+          println("Doing nothing (" + str(x) + "," + str(y) + ")!!!");
+        }
       }
-      else if ((y < 0) && (x<0)) {
-        radial = atan(x/y)+PI;
-      }
-      else if ((y>0) && ( x<0)) {
-        radial = atan(y/-x)+3*PI/2;
-      }
-      else {
-        radial = atan(x/y);
-      }
-      thisdial.setDial(radial);
     }
   }
 
   return super.surfaceTouchEvent(event);
-}
-
-//returns the angle between two vectors a and b
-//scalar product is a(dot)b = |a||b|cos(theta)
-public float vector_angle (float ax, float ay, float bx, float by) {
-
-  float adotb = ax*ay+bx*by;
-  float moda = sqrt(ax*ax+ay*ay);
-  float modb = sqrt(bx*bx+by*by);
-  return adotb / moda*modb;
 }
 
