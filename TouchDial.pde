@@ -67,7 +67,7 @@ class TouchDial {
     if (dial > -1) {
       rotate(dial);
       strokeWeight(10);
-      stroke(200,0,0);
+      stroke(196, 0, 13);
       arc(0,0, 170, 170, -PI/2-PI/6, -PI/2+PI/6);
       //line(0, 0, 0, -170/2);
     }
