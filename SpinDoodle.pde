@@ -118,16 +118,22 @@ void clear_canvas() {
 void draw() {
   float diff;
   float newcurs;
-
+  TouchDial dial;
+  
   //put the doodle on screen
   image(canvas, 0, 0);
   
   //calculate the cursor position based in the dials
   if (!diallist.isEmpty()) {
     for (int i = 0; i<diallist.size(); i++) {
-      //need to handle exception around get in case the item is deleted.
-      diallist.get(i).draw();
-      newcurs = curs[i] + 5*diallist.get(i).getDelta(); //5 is a fudge factor
+      try {
+        dial = diallist.get(i);
+      } catch (IndexOutOfBoundsException e) {
+        continue;
+      }
+      dial.draw();
+      newcurs = curs[i] + 5*dial.getDelta(); //5 is a fudge factor
+      
       if ((newcurs > loweredge[i]) && (newcurs < upperedge[i])) {
         curs[i] = newcurs;
       }
@@ -155,6 +161,7 @@ void draw() {
 //-----------------------------------------------------------------------------------------
 
 public boolean surfaceTouchEvent(MotionEvent event) {
+TouchDial dial;
 
   if ((event.getActionMasked() == MotionEvent.ACTION_DOWN) ||
     (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN)) {
@@ -162,17 +169,22 @@ public boolean surfaceTouchEvent(MotionEvent event) {
     //we only want two touchdials for this app.
     if (diallist.size() < 2) {
       int index = event.getActionIndex();
-      TouchDial t = new TouchDial(event.getPointerId(index), event.getX(index), event.getY(index));
-      diallist.add(t);
+      dial = new TouchDial(event.getPointerId(index), event.getX(index), event.getY(index));
+      diallist.add(dial);
     }
-  } 
+  }
   else if ((event.getActionMasked() == MotionEvent.ACTION_UP) ||
     (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP)) {
     //destroy the dial
     int id = event.getPointerId(event.getActionIndex());
     if (!diallist.isEmpty()) {
       for (int i=diallist.size()-1; i>=0; i--) {
-        if (diallist.get(i).id == id) {
+        try {
+          dial = diallist.get(i);
+        } catch (IndexOutOfBoundsException e) {
+          continue;
+        }
+        if (dial.id == id) {
           diallist.remove(i);
           break;
         }
@@ -183,22 +195,26 @@ public boolean surfaceTouchEvent(MotionEvent event) {
     //update the dials
     if (!diallist.isEmpty()) {
       for (int i = 0; i<diallist.size(); i++) {
-        TouchDial thisdial = diallist.get(i);
-        int index = event.findPointerIndex(thisdial.id);
-        float x = event.getX(index)-thisdial.getX();
-        float y = thisdial.getY()-event.getY(index);
+        try {
+          dial = diallist.get(i);
+        } catch (IndexOutOfBoundsException e) {
+          continue;
+        }
+        int index = event.findPointerIndex(dial.id);
+        float x = event.getX(index)-dial.getX();
+        float y = dial.getY()-event.getY(index);
 
         if ((y < 0) && (x>0)) {
-          thisdial.setDial(atan(-y/x)+PI/2);
+          dial.setDial(atan(-y/x)+PI/2);
         }
         else if ((y < 0) && (x<0)) {
-          thisdial.setDial(atan(x/y)+PI);
+          dial.setDial(atan(x/y)+PI);
         }
         else if ((y>0) && ( x<0)) {
-          thisdial.setDial(atan(y/-x)+3*PI/2);
+          dial.setDial(atan(y/-x)+3*PI/2);
         }
         else if ((y != 0) && (x!=0)) {
-          thisdial.setDial(atan(x/y));
+          dial.setDial(atan(x/y));
         }
       }
     }
