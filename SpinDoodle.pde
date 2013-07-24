@@ -22,8 +22,6 @@ Accelerometer accel;
 float accelx;
 float accely;
 float accelz;
-float eraserx;
-float erasery;
 
 void setup() {
   orientation(PORTRAIT);
