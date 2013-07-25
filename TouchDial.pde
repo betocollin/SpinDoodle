@@ -29,6 +29,9 @@ class TouchDial {
       else if ((dial <= HALF_PI) && (dial_ >=PI+HALF_PI)) {
         delta = dial_-TWO_PI-dial;
       }
+      else if (dial == -1) {
+        delta = 0;
+      }
       else {
         delta = dial_ - dial;
       }    
@@ -42,20 +45,6 @@ class TouchDial {
   float getDelta() {
     return delta;
   }
-  /*
-  float getDiff() {
-    float diff = dial - pdial;
-    if (diff < -PI) {
-      return diff + 2*PI;
-    }
-    else if (diff > PI) {
-      return diff - 2*PI;
-    }
-    else {
-      return diff;
-    }
-  }
-    */
   
   void draw() {
   //draw the TouchDial at x,y
