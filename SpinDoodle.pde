@@ -1,4 +1,5 @@
 //SpinDoodle
+
 import android.view.MotionEvent;
 
 ArrayList<TouchDial> diallist;
@@ -147,6 +148,11 @@ void draw() {
   doodle.point(curs[0], curs[1]);
   doodle.endDraw();
   image(doodle, 0, 0);
+
+  //draw a marker on skreen to show actual position of cursor 
+  stroke(255);
+  strokeWeight(2);
+  point(curs[0], curs[1]);  
 
   //handle accelerometer wipe
   accelx = accel.getX();
