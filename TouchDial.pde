@@ -6,7 +6,7 @@ class TouchDial {
   private float y;
   private float dial;
   private float delta;
-  
+
   TouchDial(int id_, float x_, float y_) {
     id = id_;
     x = x_;
@@ -52,13 +52,21 @@ class TouchDial {
     fill(0, 0, 0, 50);
     pushMatrix();
     translate(x, y);
+    stroke(255);
+    strokeWeight(2);
+    if (id == 0) {
+      line(-170/2, 0, 170/2, 0);
+    }
+    else {
+      line(0, -170/2, 0, 170/2);
+    }
+    noStroke();
     ellipse(0, 0, 170, 170);
     if (dial > -1) {
       rotate(dial);
-      strokeWeight(10);
       stroke(196, 0, 13);
+      strokeWeight(10);
       arc(0,0, 170, 170, -PI/2-PI/6, -PI/2+PI/6);
-      //line(0, 0, 0, -170/2);
     }
     popMatrix();
   }
