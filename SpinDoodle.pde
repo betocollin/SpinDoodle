@@ -19,8 +19,16 @@ float [] pdial = new float[2];
 float [] upperedge = new float[2];
 float [] loweredge = new float[2];
 float border;
-float logosize;
 float bezel;
+float logosize;
+float logooffset;
+
+//Graphic text
+PFont font;
+color red_colour = color(127, 0, 0);
+color dark_red_colour = color(70, 0, 0);
+color light_red_colour = color(255, 149, 133);
+color yellow_colour = color(255, 216, 0);
 
 Accelerometer accel;
 float accelx;
@@ -32,19 +40,20 @@ void setup() {
   curs[0] = pcurs[0] = displayWidth/2;
   curs[1] = pcurs[1] = displayHeight/2;
   border = 30;
-  logosize = 120;
   bezel = 5;
+  logosize = 120;
+  logooffset = 15;
 
   loweredge[0] = border;
   loweredge[1] = border;
   upperedge[0] = displayWidth-border;
   upperedge[1] = displayHeight-logosize;
+  font = createFont("tallpaul.ttf", logosize-20, true);
   canvas = createGraphics(displayWidth, displayHeight);  // Make an object for the canvas
   doodle = createGraphics(displayWidth, displayHeight);  // Make an object for the doodling
   diallist = new ArrayList<TouchDial>();
   accel = new Accelerometer();
   clear_canvas();
-  //clear_doodle();
 }
 
 //we cant make the fuzz area transparent because we are drawing 
@@ -94,7 +103,7 @@ void clear_canvas() {
   canvas.rect(canvas.width-border, canvas.height-border, border, border);
 
   //red borders
-  canvas.fill(196, 0, 13);
+  canvas.fill(red_colour);
   canvas.rect(0, loweredge[1], loweredge[0], canvas.height-border*2); //left bar 
   canvas.rect(loweredge[0], 0, upperedge[0]-loweredge[0], loweredge[1]); //top bar
   canvas.rect(upperedge[0], loweredge[1], canvas.width-upperedge[0], canvas.height-border*2); //right bar
@@ -107,13 +116,20 @@ void clear_canvas() {
   canvas.arc(canvas.width-border, canvas.height-border, border*2, border*2, 0, HALF_PI);
 
   //an inside edge effect
-  canvas.fill(122, 5, 13);
+  canvas.fill(dark_red_colour);
   canvas.noStroke();
   canvas.rect(loweredge[0]-bezel, loweredge[1]-bezel, bezel, upperedge[1]-loweredge[1]+2*bezel); //left
   canvas.rect(loweredge[0], loweredge[1]-bezel, upperedge[0]-loweredge[0], bezel); //top
-  canvas.fill(219, 107, 155);
+  canvas.fill(light_red_colour);
   canvas.rect(upperedge[0], loweredge[1]-bezel, bezel, upperedge[1]-loweredge[1]+2*bezel); //right
   canvas.rect(loweredge[0], upperedge[1], upperedge[0]-loweredge[0], bezel);  //bottom
+  
+  canvas.textFont(font);
+  canvas.textAlign(CENTER);
+  canvas.fill(0);
+  canvas.text("SpinDoodle", displayWidth/2+4, upperedge[1]+(displayHeight-upperedge[1])/2+logooffset+4);
+  canvas.fill(yellow_colour);
+  canvas.text("SpinDoodle", displayWidth/2, upperedge[1]+(displayHeight-upperedge[1])/2+logooffset);
   canvas.endDraw();
 }
 
