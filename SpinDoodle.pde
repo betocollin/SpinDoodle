@@ -154,7 +154,7 @@ void draw() {
         continue;
       }
       dial.draw();
-      newcurs = curs[i] + brush_speed*dial.getDelta();
+      newcurs = curs[i] + brush_speed*constrain(dial.getDelta(), -QUARTER_PI, QUARTER_PI);
       
       if ((newcurs > loweredge[i]+brush_weight/2) && (newcurs < upperedge[i]-brush_weight/2)) {
         curs[i] = newcurs;
