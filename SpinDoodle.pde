@@ -10,6 +10,8 @@ PGraphics doodle;
 //The position of the drawing cursor
 float [] curs = new float[2];
 float [] pcurs = new float[2];
+int brush_speed = 10;
+int brush_weight = 5;
 
 //dial values
 float [] dial = new float[2];
@@ -152,9 +154,9 @@ void draw() {
         continue;
       }
       dial.draw();
-      newcurs = curs[i] + 5*dial.getDelta(); //5 is a fudge factor
+      newcurs = curs[i] + brush_speed*dial.getDelta();
       
-      if ((newcurs > loweredge[i]) && (newcurs < upperedge[i])) {
+      if ((newcurs > loweredge[i]+brush_weight/2) && (newcurs < upperedge[i]-brush_weight/2)) {
         curs[i] = newcurs;
       }
     }
@@ -163,7 +165,7 @@ void draw() {
   //draw on the doodle graphic (not the screen itself)
   doodle.beginDraw();
   doodle.stroke(0);
-  doodle.strokeWeight(5);
+  doodle.strokeWeight(brush_weight);
   doodle.point(curs[0], curs[1]);
   doodle.endDraw();
   image(doodle, 0, 0);
