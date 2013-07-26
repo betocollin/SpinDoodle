@@ -3,15 +3,31 @@
 //yellow: 255, 216, 0
 import android.view.MotionEvent;
 
-ArrayList<TouchDial> diallist;
+//constants used to render brush
+final int brush_speed = 10;
+final int brush_weight = 5;
+
+//constants for frame graphics
+final float border = 30;
+final float bezel = 5;
+final float logosize = 120;
+final float logooffset = 15;
+
+//constant colours used throughout sketch
+final color red_colour = color(127, 0, 0);
+final color dark_red_colour = color(70, 0, 0);
+final color light_red_colour = color(255, 149, 133);
+final color yellow_colour = color(255, 216, 0);
+
+//arraylist to contain dials
+ArrayList<TouchDial> diallist = new ArrayList<TouchDial>();
+
+//graphics objects for surface and doodle
 PGraphics canvas;
 PGraphics doodle;
 
-//The position of the drawing cursor
+//The position of the doodle cursor
 float [] curs = new float[2];
-float [] pcurs = new float[2];
-int brush_speed = 10;
-int brush_weight = 5;
 
 //dial values
 float [] dial = new float[2];
@@ -20,31 +36,21 @@ float [] pdial = new float[2];
 //Values for border drawing
 float [] upperedge = new float[2];
 float [] loweredge = new float[2];
-float border;
-float bezel;
-float logosize;
-float logooffset;
 
-//Graphic text
+//font for logo text
 PFont font;
-color red_colour = color(127, 0, 0);
-color dark_red_colour = color(70, 0, 0);
-color light_red_colour = color(255, 149, 133);
-color yellow_colour = color(255, 216, 0);
 
+//accelerometer for shake to clear
 Accelerometer accel;
 float accelx;
 float accely;
 float accelz;
 
 void setup() {
+  //set initial values that cannot be set outside setup()
   orientation(PORTRAIT);
-  curs[0] = pcurs[0] = displayWidth/2;
-  curs[1] = pcurs[1] = displayHeight/2;
-  border = 30;
-  bezel = 5;
-  logosize = 120;
-  logooffset = 15;
+  curs[0] = displayWidth/2;
+  curs[1] = displayHeight/2;
 
   loweredge[0] = border;
   loweredge[1] = border;
@@ -53,38 +59,9 @@ void setup() {
   font = createFont("tallpaul.ttf", logosize-20, true);
   canvas = createGraphics(displayWidth, displayHeight);  // Make an object for the canvas
   doodle = createGraphics(displayWidth, displayHeight);  // Make an object for the doodling
-  diallist = new ArrayList<TouchDial>();
   accel = new Accelerometer();
-  clear_canvas();
-}
 
-//we cant make the fuzz area transparent because we are drawing 
-//on the main screen with the controls
-//therefore as the fuzz image becomes more transparent it will reveal the 
-//controls that were drawn earlier.
-//we need a doodle image that is made transparent. revealing the canvas underneath.
-
-void fade_doodle() {
-  float r, g ,b, a;
-  color pix;
-  //generate textured area
-  //manipulating the pixels directly is clunky but 1,000 times faster.
-  doodle.loadPixels();
-  for (int i = 0; i < doodle.pixels.length; i++) {
-    pix = doodle.pixels[i];
-    r = red(pix);
-    g = green(pix);
-    b = blue(pix);
-    a = alpha(pix);
-    pix = color(r, g, b, constrain(a-50, 0, 255));
-    doodle.pixels[i] = pix;
-  }
-  doodle.updatePixels();
-}
-
-void clear_canvas() {
-  //generate textured area
-  //manipulating the pixels directly is clunky but 1,000 times faster.
+  //generate textured doodle canvas
   canvas.loadPixels();
   for (int i = 0; i < canvas.pixels.length; i++) {
     float rand = random(125, 175);
@@ -111,7 +88,7 @@ void clear_canvas() {
   canvas.rect(upperedge[0], loweredge[1], canvas.width-upperedge[0], canvas.height-border*2); //right bar
   canvas.rect(loweredge[0], upperedge[1], upperedge[0]-loweredge[0], canvas.height-upperedge[1]); //bottom bar
 
-    //curve corners
+  //curve corners
   canvas.arc(border, border, border*2, border*2, PI, PI+HALF_PI);
   canvas.arc(canvas.width-border, border, border*2, border*2, PI+HALF_PI, TWO_PI);
   canvas.arc(border, canvas.height-border, border*2, border*2, HALF_PI, PI);
@@ -134,6 +111,24 @@ void clear_canvas() {
   canvas.text("SpinDoodle", displayWidth/2, upperedge[1]+(displayHeight-upperedge[1])/2+logooffset);
   canvas.endDraw();
 }
+
+void fade_doodle() {
+  float r, g ,b, a;
+  color pix;
+  //manipulating the pixels directly is clunky but 1,000 times faster.
+  doodle.loadPixels();
+  for (int i = 0; i < doodle.pixels.length; i++) {
+    pix = doodle.pixels[i];
+    r = red(pix);
+    g = green(pix);
+    b = blue(pix);
+    a = alpha(pix);
+    pix = color(r, g, b, constrain(a-50, 0, 255));
+    doodle.pixels[i] = pix;
+  }
+  doodle.updatePixels();
+}
+
 
 //-----------------------------------------------------------------------------------------
 
@@ -188,14 +183,18 @@ void draw() {
 //-----------------------------------------------------------------------------------------
 
 public boolean surfaceTouchEvent(MotionEvent event) {
-TouchDial dial;
+  TouchDial dial;
+  int index;
+  int id;
+  float x;
+  float y;
 
   if ((event.getActionMasked() == MotionEvent.ACTION_DOWN) ||
     (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN)) {
     //create a new dial with X and Y coords
     //we only want two touchdials for this app.
     if (diallist.size() < 2) {
-      int index = event.getActionIndex();
+      index = event.getActionIndex();
       dial = new TouchDial(event.getPointerId(index), event.getX(index), event.getY(index));
       diallist.add(dial);
     }
@@ -203,7 +202,7 @@ TouchDial dial;
   else if ((event.getActionMasked() == MotionEvent.ACTION_UP) ||
     (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP)) {
     //destroy the dial
-    int id = event.getPointerId(event.getActionIndex());
+    id = event.getPointerId(event.getActionIndex());
     if (!diallist.isEmpty()) {
       for (int i=diallist.size()-1; i>=0; i--) {
         try {
@@ -227,9 +226,9 @@ TouchDial dial;
         } catch (IndexOutOfBoundsException e) {
           continue;
         }
-        int index = event.findPointerIndex(dial.id);
-        float x = event.getX(index)-dial.getX();
-        float y = dial.getY()-event.getY(index);
+        index = event.findPointerIndex(dial.id);
+        x = event.getX(index)-dial.getX();
+        y = dial.getY()-event.getY(index);
 
         if ((y < 0) && (x>0)) {
           dial.setDial(atan(-y/x)+PI/2);
