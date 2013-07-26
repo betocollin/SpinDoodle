@@ -195,7 +195,7 @@ public boolean surfaceTouchEvent(MotionEvent event) {
     //we only want two touchdials for this app.
     if (diallist.size() < 2) {
       index = event.getActionIndex();
-      dial = new TouchDial(event.getPointerId(index), event.getX(index), event.getY(index));
+      dial = new TouchDial(event.getPointerId(index), event.getX(index), event.getY(index), red_colour);
       diallist.add(dial);
     }
   }

@@ -6,11 +6,13 @@ class TouchDial {
   private float y;
   private float dial;
   private float delta;
-
-  TouchDial(int id_, float x_, float y_) {
+  private color colour;
+  
+  TouchDial(int id_, float x_, float y_, color c_) {
     id = id_;
     x = x_;
     y = y_;
+    colour = c_;
     dial = -1;
   }
   
@@ -64,7 +66,7 @@ class TouchDial {
     ellipse(0, 0, 170, 170);
     if (dial > -1) {
       rotate(dial);
-      stroke(196, 0, 13);
+      stroke(colour);
       strokeWeight(10);
       arc(0,0, 170, 170, -PI/2-PI/6, -PI/2+PI/6);
     }
