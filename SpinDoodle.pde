@@ -1,5 +1,6 @@
 //SpinDoodle
-
+//colors to use: red: 127,0,0
+//yellow: 255, 216, 0
 import android.view.MotionEvent;
 
 ArrayList<TouchDial> diallist;
@@ -18,6 +19,7 @@ float [] pdial = new float[2];
 float [] upperedge = new float[2];
 float [] loweredge = new float[2];
 float border;
+float logosize;
 float bezel;
 
 Accelerometer accel;
@@ -30,12 +32,13 @@ void setup() {
   curs[0] = pcurs[0] = displayWidth/2;
   curs[1] = pcurs[1] = displayHeight/2;
   border = 30;
+  logosize = 120;
   bezel = 5;
 
   loweredge[0] = border;
   loweredge[1] = border;
   upperedge[0] = displayWidth-border;
-  upperedge[1] = displayHeight-border;
+  upperedge[1] = displayHeight-logosize;
   canvas = createGraphics(displayWidth, displayHeight);  // Make an object for the canvas
   doodle = createGraphics(displayWidth, displayHeight);  // Make an object for the doodling
   diallist = new ArrayList<TouchDial>();
@@ -92,10 +95,10 @@ void clear_canvas() {
 
   //red borders
   canvas.fill(196, 0, 13);
-  canvas.rect(0, border, border, canvas.height-border*2); //left bar
-  canvas.rect(border, 0, canvas.width-border*2, border); //top bar
-  canvas.rect(canvas.width-border, border, border, canvas.height-border*2); //right bar
-  canvas.rect(border, canvas.height-border, canvas.width-border*2, border); //bottom bar
+  canvas.rect(0, loweredge[1], loweredge[0], canvas.height-border*2); //left bar 
+  canvas.rect(loweredge[0], 0, upperedge[0]-loweredge[0], loweredge[1]); //top bar
+  canvas.rect(upperedge[0], loweredge[1], canvas.width-upperedge[0], canvas.height-border*2); //right bar
+  canvas.rect(loweredge[0], upperedge[1], upperedge[0]-loweredge[0], canvas.height-upperedge[1]); //bottom bar
 
     //curve corners
   canvas.arc(border, border, border*2, border*2, PI, PI+HALF_PI);
@@ -106,11 +109,11 @@ void clear_canvas() {
   //an inside edge effect
   canvas.fill(122, 5, 13);
   canvas.noStroke();
-  canvas.rect(border-bezel, border-bezel, bezel, canvas.height-2*border+2*bezel);
-  canvas.rect(border, border-bezel, canvas.width-2*border, bezel);
+  canvas.rect(loweredge[0]-bezel, loweredge[1]-bezel, bezel, upperedge[1]-loweredge[1]+2*bezel); //left
+  canvas.rect(loweredge[0], loweredge[1]-bezel, upperedge[0]-loweredge[0], bezel); //top
   canvas.fill(219, 107, 155);
-  canvas.rect(canvas.width-border, border-bezel, bezel, canvas.height-2*border+2*bezel);
-  canvas.rect(border, canvas.height-border, canvas.width-2*border, bezel);
+  canvas.rect(upperedge[0], loweredge[1]-bezel, bezel, upperedge[1]-loweredge[1]+2*bezel); //right
+  canvas.rect(loweredge[0], upperedge[1], upperedge[0]-loweredge[0], bezel);  //bottom
   canvas.endDraw();
 }
 
