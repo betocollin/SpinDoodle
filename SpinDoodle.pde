@@ -1,6 +1,23 @@
-//SpinDoodle
-//colors to use: red: 127,0,0
-//yellow: 255, 216, 0
+/***********************************************************************
+    SpinDoodle - An Android application written in Processing/Java
+
+    Copyright (C) 2013 Paul Backhouse
+
+    This file is part of SpinDoodle. SpinDoodle is free software: you
+    can redistribute it and/or modify it under the terms of the GNU
+    General Public License as published by the Free Software
+    Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    SpinDoodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SpinDoodle.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
+
 import android.view.MotionEvent;
 
 //constants used to render brush
